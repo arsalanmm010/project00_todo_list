@@ -1,9 +1,18 @@
 import { useState } from "react";
 import { RiDeleteBin2Line } from "react-icons/ri";
 import { BiEdit, BiSave } from "react-icons/bi";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addTask,
+  deleteTask,
+  editTask,
+  saveTask,
+  updateTask,
+} from "../redux/actions/index";
 
 export default function Main() {
-  const [tasks, setTasks] = useState([]);
+  const { tasks } = useSelector((state) => state.tasks);
+  const dispatch = useDispatch();
   const [newTask, setNewTask] = useState("");
 
   function handleChange(e) {
@@ -21,36 +30,31 @@ export default function Main() {
       isEditing: false, // Add isEditing property to track edit state
     };
 
-    setTasks((prev) => [...prev, task]);
+    dispatch(addTask(task));
     setNewTask("");
   };
 
   const handleDeleteTask = (taskId) => {
-    setTasks((prev) => prev.filter((task) => task.id !== taskId));
+    dispatch(deleteTask(taskId));
   };
 
   const handleEditTask = (taskId) => {
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.id === taskId ? { ...task, isEditing: true } : task
-      )
-    );
+    dispatch(editTask(taskId));
   };
 
   const handleUpdateTask = (taskId, updatedText) => {
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.id === taskId ? { ...task, text: updatedText } : task
-      )
-    );
+    dispatch(updateTask(taskId, updatedText));
   };
 
   const handleSaveTask = (taskId) => {
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.id === taskId ? { ...task, isEditing: false } : task
-      )
-    );
+    const task = tasks.find((task) => task.id === taskId);
+
+    if (!task.text) {
+      alert("Please enter a task");
+      return;
+    }
+
+    dispatch(saveTask(taskId));
   };
 
   return (
