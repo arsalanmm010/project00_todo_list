@@ -9,6 +9,7 @@ import {
   saveTask,
   updateTask,
 } from "../redux/actions/index";
+import "../sass/index.scss";
 
 export default function Main() {
   const { tasks } = useSelector((state) => state.tasks);
